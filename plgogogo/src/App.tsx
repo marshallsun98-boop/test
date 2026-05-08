@@ -1,4 +1,5 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 import { useAppStore } from './stores/appStore'
 import AppLayout from './components/layout/AppLayout'
 import Home from './pages/Home'
@@ -11,8 +12,36 @@ import Achievements from './pages/Achievements'
 import Profile from './pages/Profile'
 import Import from './pages/Import'
 
-function App() {
+function AppRoutes() {
   const profile = useAppStore((s) => s.profile)
+  const location = useLocation()
+  const [isReady, setIsReady] = useState(false)
+
+  useEffect(() => {
+    // 等待 Zustand persist 从 localStorage 恢复数据
+    const timer = setTimeout(() => {
+      setIsReady(true)
+    }, 50)
+    return () => clearTimeout(timer)
+  }, [])
+
+  // 未就绪时显示加载中
+  if (!isReady) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-5xl mb-4 animate-bounce">🏃‍♂️</div>
+          <p className="text-gray-500">加载中...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // 未创建角色且不在 onboarding/import 页面时，强制跳转
+  const publicPaths = ['/onboarding', '/import']
+  if (!profile && !publicPaths.includes(location.pathname)) {
+    return <Navigate to="/onboarding" replace />
+  }
 
   return (
     <Routes>
@@ -32,4 +61,4 @@ function App() {
   )
 }
 
-export default App
+export default AppRoutes
