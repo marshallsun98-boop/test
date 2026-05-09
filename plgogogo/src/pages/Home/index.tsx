@@ -15,7 +15,6 @@ export const Home: React.FC = () => {
   const now = new Date()
 
   if (!profile) {
-    navigate('/onboarding')
     return null
   }
 
@@ -32,7 +31,9 @@ export const Home: React.FC = () => {
         <Button
           fullWidth
           size="lg"
-          onClick={() => navigate('/climbing')}
+          onClick={() => {
+            window.location.hash = '#/climbing'
+          }}
           className="py-4 text-xl"
         >
           🚀 开爬！
