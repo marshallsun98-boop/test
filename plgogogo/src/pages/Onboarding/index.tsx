@@ -13,6 +13,17 @@ export const Onboarding: React.FC = () => {
   const [defaultFloors, setDefaultFloors] = useState(30)
   const [error, setError] = useState('')
 
+  const generateId = () => {
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+      return crypto.randomUUID()
+    }
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+      const r = (Math.random() * 16) | 0
+      const v = c === 'x' ? r : (r & 0x3) | 0x8
+      return v.toString(16)
+    })
+  }
+
   const handleSubmit = () => {
     if (!nickname.trim() || nickname.trim().length < 2) {
       setError('昵称至少需要2个字符')
@@ -24,7 +35,7 @@ export const Onboarding: React.FC = () => {
     }
 
     const profile = {
-      id: crypto.randomUUID(),
+      id: generateId(),
       nickname: nickname.trim(),
       avatar: selectedAvatar,
       defaultFloors,
@@ -32,7 +43,7 @@ export const Onboarding: React.FC = () => {
     }
 
     setProfile(profile)
-    navigate('/')
+    window.location.hash = '#/' 
   }
 
   return (
